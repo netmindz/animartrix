@@ -26,12 +26,10 @@ License CC BY-NC 3.0
 
 #include <FastLED.h>
 
-#ifdef ESP32
-#define USE_SMARTMATRIX // Comment/remove this line to swap back to FastLED
-#endif
+// #define USE_SMARTMATRIX // Comment/remove this line to swap back to FastLED
 
-#define num_x       32                       // how many LEDs are in one row?
-#define num_y       32                       // how many rows?
+#define num_x       30                       // how many LEDs are in one row?
+#define num_y       30                       // how many rows?
 #define brightness 125                       // please be aware that reducing brightness also reduces color resolution, use only in emergency
 
 #define radial_filter_radius 23.0;      // on 32x32, use 11 for 16x16
@@ -43,7 +41,8 @@ const uint16_t kMatrixHeight  = num_y;  // Set to the height of your display
   #ifdef ESP32
     #include <MatrixHardware_ESP32_V0.h> // ESP32
   #else
-    #include <MatrixHardware_Teensy4_ShieldV5.h>        // SmartLED Shield for Teensy 4 (V5)
+    // #include <MatrixHardware_Teensy4_ShieldV5.h>        // SmartLED Shield for Teensy 4 (V5) 
+    #include <MatrixHardware_Teensy4_ShieldV4Adapter.h> // Teensy 4 Adapter attached to SmartLED Shield for Teensy 3 (V4)
   #endif
 
   #include <SmartMatrix.h>
@@ -254,7 +253,7 @@ void setup() {
   matrix.begin();
 #else
   // FastLED.addLeds<NEOPIXEL, 13>(leds, NUM_LEDS);
-  FastLED.addLeds<APA102, 11, 13, BGR, DATA_RATE_MHZ(12)>(buffer, NUM_LEDS);   
+  FastLED.addLeds<APA102, 7, 14, BGR, DATA_RATE_MHZ(8)>(buffer, NUM_LEDS);   
   // FastLED.setMaxPowerInVoltsAndMilliamps( 5, 2000); // optional current limiting [5V, 2000mA] 
   FastLED.setBrightness(brightness);
 #endif

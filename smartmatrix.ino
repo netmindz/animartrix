@@ -51,6 +51,7 @@ void report_performance() {
   int fps  = 1000000 / total;                // frames per second
   int kpps = (fps * num_x * num_y) / 1000;   // kilopixel per second
 
+  Serial.printf("%s ", gPatterns[currentPattern].name.c_str());
   Serial.print(fps);                         Serial.print(" fps  ");
   Serial.print(kpps);                        Serial.print(" kpps @");
   Serial.print(num_x*num_y);                 Serial.print(" LEDs  ");  
@@ -59,9 +60,9 @@ void report_performance() {
   Serial.print(round((push * 100) / total)); Serial.print("%  (");
   Serial.print(round(calc));                 Serial.print(" + ");
   Serial.print(round(push));                 Serial.print(" µs)  ");
-#ifndef ESP32  
-  Serial.print("Core-temp: %f °C\n", tempmonGetTemp());
-#else
+// #ifndef ESP32  
+//   Serial.print("Core-temp: %f °C\n", tempmonGetTemp());
+// #else
   Serial.println("");
-#endif
+// #endif
 }
