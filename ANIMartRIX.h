@@ -1067,9 +1067,9 @@ void Scaledemo1() {
       
 
   timings.master_speed = 0.00003;    // speed ratios for the oscillators
-  timings.ratio[0] = 4;         // higher values = faster transitions
-  timings.ratio[1] = 3.2;
-  timings.ratio[2] = 10;
+  timings.ratio[0] = 0.4;         // higher values = faster transitions
+  timings.ratio[1] = 0.32;
+  timings.ratio[2] = 0.10;
   timings.ratio[3] = 0.05;
   timings.ratio[4] = 0.6;
   timings.offset[0] = 0;
