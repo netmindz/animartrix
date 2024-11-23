@@ -2391,7 +2391,7 @@ void SM8() {
 
   
 
-  timings.master_speed = 0.06;    // master speed
+  timings.master_speed = 0.005;    // master speed
 
   timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 0.027;
