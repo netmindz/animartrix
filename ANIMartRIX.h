@@ -258,8 +258,6 @@ void calculate_oscillators(oscillators &timings) {
 
 void run_default_oscillators(){
 
-  timings.master_speed = 0.005;    // master speed
-
   timings.ratio[0] = 1;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 2;
   timings.ratio[2] = 3;
@@ -1330,7 +1328,7 @@ void Hot_Blob() { // nice one
 
   get_ready(); 
                   
-
+  timings.master_speed = 0.005;    // master speed
   run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
@@ -1385,9 +1383,8 @@ void Zoom() { // nice one
 
   
 
-  run_default_oscillators();
   timings.master_speed = 0.003;
-  calculate_oscillators(timings); 
+  run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
@@ -1430,9 +1427,8 @@ void Slow_Fade() { // nice one
 
                     
 
-  run_default_oscillators();
   timings.master_speed = 0.00005;
-  calculate_oscillators(timings); 
+  run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
@@ -3434,9 +3430,8 @@ void Zoom2() { // nice one
 
   
 
-  run_default_oscillators();
   timings.master_speed = 0.003;
-  calculate_oscillators(timings); 
+  run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
