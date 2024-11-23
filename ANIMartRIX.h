@@ -133,6 +133,9 @@ void init(int w, int h,  bool serpentine) {
   }
   render_polar_lookup_table((num_x / 2) - 0.5, (num_y / 2) - 0.5);          // precalculate all polar coordinates 
                                                                            // polar origin is set to matrix centre
+
+  timings.master_speed = 0.01;    // set default speed ratio for the oscillators, not all effects set their own, so start from know state
+
 }
 
 /**
