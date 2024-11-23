@@ -1,6 +1,7 @@
 # AnimARTrix
 
-by Stefan Petrick 2023. 
+by Stefan Petrick 2023.
+Object Oriented port by Will Tatam
 
 High quality LED animations for your next project.
 

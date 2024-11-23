@@ -2389,6 +2389,7 @@ void SM8() {
 
   timings.master_speed = 0.005;    // master speed
 
+
   timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 0.027;
   timings.ratio[2] = 0.031;
@@ -3194,9 +3195,9 @@ void Water() {
      
       //pixel.red    = show2;
       
+      pixel.blue    = (0.7*show2+0.6*show3+0.5*show4);
       pixel.red     = pixel.blue-40;
       pixel.green   = 0;
-      pixel.blue    = (0.7*show2+0.6*show3+0.5*show4);
       //pixel.red     = radial*show3;
       //pixel.green     = 0.9*radial*show4;
       
