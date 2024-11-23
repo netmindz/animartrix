@@ -1328,7 +1328,7 @@ void Hot_Blob() { // nice one
 
   get_ready(); 
                   
-  timings.master_speed = 0.005;    // master speed
+  timings.master_speed = 0.001;    // master speed
   run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
