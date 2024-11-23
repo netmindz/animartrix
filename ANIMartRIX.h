@@ -133,6 +133,9 @@ void init(int w, int h,  bool serpentine) {
   }
   render_polar_lookup_table((num_x / 2) - 0.5, (num_y / 2) - 0.5);          // precalculate all polar coordinates 
                                                                            // polar origin is set to matrix centre
+
+  timings.master_speed = 0.01;    // set default speed ratio for the oscillators, not all effects set their own, so start from know state
+
 }
 
 /**
@@ -254,8 +257,6 @@ void calculate_oscillators(oscillators &timings) {
 
 
 void run_default_oscillators(){
-
-  timings.master_speed = 0.005;    // master speed
 
   timings.ratio[0] = 1;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 2;
@@ -1066,9 +1067,9 @@ void Scaledemo1() {
       
 
   timings.master_speed = 0.00003;    // speed ratios for the oscillators
-  timings.ratio[0] = 4;         // higher values = faster transitions
-  timings.ratio[1] = 3.2;
-  timings.ratio[2] = 10;
+  timings.ratio[0] = 0.4;         // higher values = faster transitions
+  timings.ratio[1] = 0.32;
+  timings.ratio[2] = 0.10;
   timings.ratio[3] = 0.05;
   timings.ratio[4] = 0.6;
   timings.offset[0] = 0;
@@ -1327,7 +1328,7 @@ void Hot_Blob() { // nice one
 
   get_ready(); 
                   
-
+  timings.master_speed = 0.001;    // master speed
   run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
@@ -1382,9 +1383,8 @@ void Zoom() { // nice one
 
   
 
-  run_default_oscillators();
   timings.master_speed = 0.003;
-  calculate_oscillators(timings); 
+  run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
@@ -1427,9 +1427,8 @@ void Slow_Fade() { // nice one
 
                     
 
-  run_default_oscillators();
   timings.master_speed = 0.00005;
-  calculate_oscillators(timings); 
+  run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
@@ -2388,7 +2387,8 @@ void SM8() {
 
   
 
-  timings.master_speed = 0.03;    // master speed
+  timings.master_speed = 0.005;    // master speed
+
 
   timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 0.027;
@@ -3431,9 +3431,8 @@ void Zoom2() { // nice one
 
   
 
-  run_default_oscillators();
   timings.master_speed = 0.003;
-  calculate_oscillators(timings); 
+  run_default_oscillators();
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
