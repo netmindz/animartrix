@@ -31,19 +31,16 @@ License CC BY-NC 3.0
 
 
 struct render_parameters {
-
-  // TODO float center_x = (num_x / 2) - 0.5;   // center of the matrix
-  // TODO float center_y = (num_y / 2) - 0.5;
-  float center_x = (999 / 2) - 0.5;   // center of the matrix
-  float center_y = (999 / 2) - 0.5;
+  float center_x;   // center of the matrix
+  float center_y;
   float dist, angle;                
-  float scale_x = 0.1;                  // smaller values = zoom in
-  float scale_y = 0.1;
-  float scale_z = 0.1;       
+  float scale_x;    // smaller values = zoom in
+  float scale_y;
+  float scale_z;       
   float offset_x, offset_y, offset_z;     
   float z;  
-  float low_limit  = 0;                 // getting contrast by highering the black point
-  float high_limit = 1;                                            
+  float low_limit;  // getting contrast by highering the black point
+  float high_limit;                                            
 };
 
 render_parameters animation;     // all animation parameters in one place
@@ -133,8 +130,33 @@ void init(int w, int h,  bool serpentine) {
   }
   render_polar_lookup_table((num_x / 2) - 0.5, (num_y / 2) - 0.5);          // precalculate all polar coordinates 
                                                                            // polar origin is set to matrix centre
+  set_default_values();
+}
+
+void set_default_values() {
 
   timings.master_speed = 0.01;    // set default speed ratio for the oscillators, not all effects set their own, so start from know state
+  memset(timings.offset, 0.0, sizeof(timings.offset));
+  memset(timings.ratio, 0.0, sizeof(timings.ratio));
+
+  animation.center_x = (999 / 2) - 0.5;   // center of the matrix
+  animation.center_y = (999 / 2) - 0.5;
+  animation.dist = 0.0;
+  animation.angle = 0.0;                
+  animation.scale_x = 0.1;                  // smaller values = zoom in
+  animation.scale_y = 0.1;
+  animation.scale_z = 0.1;       
+  animation.offset_x = 0.0;
+  animation.offset_y = 0.0;
+  animation.offset_z = 0.0;     
+  animation.z = 0.0;  
+  animation.low_limit  = 0;                 // getting contrast by highering the black point
+  animation.high_limit = 1;    
+
+  memset(move.directional, 0.0, sizeof(move.directional));
+  memset(move.linear, 0.0, sizeof(move.linear));
+  memset(move.noise_angle, 0.0, sizeof(move.noise_angle));
+  memset(move.radial, 0.0, sizeof(move.radial));
 
 }
 
