@@ -1547,64 +1547,11 @@ void RGB_Blobs() { // nice one
 }
 
 
-void RGB_Blobs2() { // nice one
-
-  get_ready(); 
-                      
-
-  timings.master_speed = 0.12;    // master speed
-
-  timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.0027;
-  timings.ratio[2] = 0.0031;
-  timings.ratio[3] = 0.0033;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[4] = 0.0036;
-  timings.ratio[5] = 0.0039;
-  
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-      
-      animation.dist       = distance[x][y];
-      animation.angle      = polar_theta[x][y] + move.radial[0] + move.noise_angle[0]+ move.noise_angle[3] + move.noise_angle[1];
-      animation.z          = (sqrtf(animation.dist));// - 10 * move.linear[0];
-      animation.scale_x    = 0.1;
-      animation.scale_y    = 0.1;
-      animation.offset_z   = 10;
-      animation.offset_x   = 10*move.linear[0];
-      float show1          = render_value(animation);
-
-      animation.angle      = polar_theta[x][y] + move.radial[1]+ move.noise_angle[1]+ move.noise_angle[4] + move.noise_angle[2];
-      animation.offset_x   = 11*move.linear[1];
-      animation.offset_z   = 100;
-      float show2          = render_value(animation);
-
-      animation.angle      = polar_theta[x][y] + move.radial[2]+ move.noise_angle[2]+ move.noise_angle[5]+ move.noise_angle[3];
-      animation.offset_x   = 12*move.linear[2];
-      animation.offset_z   = 300;
-      float show3          = render_value(animation);
-      
-      float radius = radial_filter_radius;   // radius of a radial brightness filter
-      float radial = (radius-distance[x][y])/distance[x][y];
-
-      pixel.red    = radial * (show1-show3);
-      pixel.green  = radial * (show2-show1);
-      pixel.blue   = radial * (show3-show2);
-     
-      pixel = rgb_sanity_check(pixel);
-     setPixelColor(x, y, pixel);
-    }
-  }
-  
-}
-
-void RGB_Blobs3() { // nice one
+// Shared RGB_Blobs2/3 helper - same structure, differ in dist offset and color mapping
+void RGB_Blobs23_base(bool variant3) { // nice one
 
   get_ready();
 
-                   
-
   timings.master_speed = 0.12;    // master speed
 
   timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
@@ -1619,7 +1566,7 @@ void RGB_Blobs3() { // nice one
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
       
-      animation.dist       = distance[x][y] + move.noise_angle[4];
+      animation.dist       = variant3 ? (distance[x][y] + move.noise_angle[4]) : distance[x][y];
       animation.angle      = polar_theta[x][y] + move.radial[0] + move.noise_angle[0]+ move.noise_angle[3] + move.noise_angle[1];
       animation.z          = (sqrtf(animation.dist));// - 10 * move.linear[0];
       animation.scale_x    = 0.1 ;
@@ -1641,16 +1588,28 @@ void RGB_Blobs3() { // nice one
       float radius = radial_filter_radius;   // radius of a radial brightness filter
       float radial = (radius-distance[x][y])/distance[x][y];
 
-      pixel.red    = radial * (show1+show3)*0.5 * animation.dist/5;
-      pixel.green  = radial * (show2+show1)*0.5 * y/15;
-      pixel.blue   = radial * (show3+show2)*0.5 * x/15;
-     
+      if (variant3) {
+        pixel.red    = radial * (show1+show3)*0.5 * animation.dist/5;
+        pixel.green  = radial * (show2+show1)*0.5 * y/15;
+        pixel.blue   = radial * (show3+show2)*0.5 * x/15;
+      } else {
+        pixel.red    = radial * (show1-show3);
+        pixel.green  = radial * (show2-show1);
+        pixel.blue   = radial * (show3-show2);
+      }
+
       pixel = rgb_sanity_check(pixel);
-      setPixelColor((num_x * y + x), pixel);
+      if (variant3)
+        setPixelColor((num_x * y + x), pixel);
+      else
+        setPixelColor(x, y, pixel);
     }
   }
   
 }
+
+void RGB_Blobs2() { RGB_Blobs23_base(false); }
+void RGB_Blobs3() { RGB_Blobs23_base(true); }
 
 // Shared RGB_Blobs4/5 helper - differ only in scale
 void RGB_Blobs45_base(float scale) { // nice one
@@ -2130,7 +2089,7 @@ void SM56_base(float s, bool variant6) {
       animation.offset_x   = 0;
       animation.offset_y   = 0;
       float show2          = render_value(animation);
-      
+
       animation.dist       = distance[x][y]* move.directional[2] * s;
       animation.angle      = polar_theta[x][y] + move.radial[2];
       animation.z          = 500;
@@ -2160,7 +2119,7 @@ void SM56_base(float s, bool variant6) {
       animation.offset_x   = 0;
       animation.offset_y   = 0;
       float show5          = render_value(animation);
-      
+
       animation.dist       = distance[x][y]* move.directional[5] * s;
       animation.angle      = polar_theta[x][y] + move.radial[5];
       animation.z          = 500;
@@ -3362,56 +3321,44 @@ void Module_Experiment810_base(float w, bool use_hsv) {
       float s = 0.4; // scale
       float r = 1.5; // scroll speed
 
-      animation.dist       = 3+distance[x][y] + 3*sinf(0.25*distance[x][y]-move.radial[3]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[0] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 10*move.linear[0] ;
-      animation.offset_y   = -5 * r * move.linear[0];
-      animation.offset_x   = 10;
-      animation.low_limit  = 0;
-      show1                = render_value(animation);
+      static const float dist_add[]   = {3, 4, 5};
+      static const float sin_coeff[]  = {0.25, 0.24, 0.23};
+      static const int   radial_idx[] = {3, 4, 5};
+      static const int   noise_idx[]  = {0, 1, 2};
+      static const float oz_mult[]    = {10, 0.1, 0.1};
+      static const float ox_vals[]    = {10, 100, 1000};
+      float shows[3];
 
-      animation.dist       = 4+distance[x][y] + 4*sinf(0.24*distance[x][y]-move.radial[4]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[1] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 0.1*move.linear[1] ;
-      animation.offset_y   = -5 * r * move.linear[1];
-      animation.offset_x   = 100;
-      animation.low_limit  = 0;
-      show2                = render_value(animation);
+      for (int i = 0; i < 3; i++) {
+        animation.dist       = dist_add[i]+distance[x][y] + dist_add[i]*sinf(sin_coeff[i]*distance[x][y]-move.radial[radial_idx[i]]);
+        animation.angle      = polar_theta[x][y] + move.noise_angle[noise_idx[i]] + move.noise_angle[6];
+        animation.z          = 5;
+        animation.scale_x    = 0.1 * s;
+        animation.scale_y    = 0.1 * s;
+        animation.offset_z   = oz_mult[i]*move.linear[i] ;
+        animation.offset_y   = -5 * r * move.linear[i];
+        animation.offset_x   = ox_vals[i];
+        animation.low_limit  = 0;
+        shows[i]             = render_value(animation);
+      }
 
-      animation.dist       = 5+distance[x][y] + 5*sinf(0.23*distance[x][y]-move.radial[5]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[2] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 0.1*move.linear[2] ;
-      animation.offset_y   = -5 * r * move.linear[2];
-      animation.offset_x   = 1000;
-      animation.low_limit  = 0;
-      show3                = render_value(animation);
-
-      show4 = colordodge(show1, show2);
+      show4 = colordodge(shows[0], shows[1]);
 
       float rad = sinf(PI/2+distance[x][y]/14); // better radial filter?!
 
       if (use_hsv) {
-        CHSV(rad * ((show1 + show2) + show3), 255, 255);
+        CHSV(rad * ((shows[0] + shows[1]) + shows[2]), 255, 255);
         pixel = rgb_sanity_check(pixel);
         byte a = millis()/100;
-        CRGB p = CRGB( CHSV(((a + show1 + show2) + show3), 255, 255));
+        CRGB p = CRGB( CHSV(((a + shows[0] + shows[1]) + shows[2]), 255, 255));
         rgb pixel;
         pixel.red = p.red;
         pixel.green = p.green;
         pixel.blue = p.blue;
         setPixelColor(x, y, pixel);
       } else {
-        pixel.red    = rad * ((show1 + show2) + show3);
-        pixel.green  = (((show2 + show3)*0.8)-90)*rad;
+        pixel.red    = rad * ((shows[0] + shows[1]) + shows[2]);
+        pixel.green  = (((shows[1] + shows[2])*0.8)-90)*rad;
         pixel.blue   = show4 * 0.2;
         pixel = rgb_sanity_check(pixel);
        setPixelColor(x, y, pixel);
