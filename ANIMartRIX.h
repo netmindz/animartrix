@@ -900,12 +900,13 @@ void Distance_Experiment() {
 }
 
 
-void Caleido1() {
+// Shared Caleido1/2 helper - differ only in master_speed and angle multipliers
+void Caleido12_base(float speed, float a0, float a1, float a2, float a3) {
 
   get_ready(); 
   
 
-  timings.master_speed = 0.003;    // speed ratios for the oscillators
+  timings.master_speed = speed;    // speed ratios for the oscillators
   timings.ratio[0] = 0.02;         // higher values = faster transitions
   timings.ratio[1] = 0.03;
   timings.ratio[2] = 0.04;
@@ -924,7 +925,7 @@ void Caleido1() {
   
       // describe and render animation layers
       animation.dist       = distance[x][y] * (2 + move.directional[0]) / 3;
-      animation.angle      = 3 * polar_theta[x][y] + 3 * move.noise_angle[0] + move.radial[4];
+      animation.angle      = a0 * polar_theta[x][y] + 3 * move.noise_angle[0] + move.radial[4];
       animation.scale_x    = 0.1;
       animation.scale_y    = 0.1;
       animation.scale_z    = 0.1;
@@ -935,19 +936,19 @@ void Caleido1() {
       float show1          = render_value(animation);
 
       animation.dist       = distance[x][y] * (2 + move.directional[1]) / 3;
-      animation.angle      = 4 * polar_theta[x][y] + 3 * move.noise_angle[1] + move.radial[4];
+      animation.angle      = a1 * polar_theta[x][y] + 3 * move.noise_angle[1] + move.radial[4];
       animation.offset_x   = 2 * move.linear[1];
       animation.z          = move.linear[1];
       float show2          = render_value(animation);
 
       animation.dist       = distance[x][y] * (2 + move.directional[2]) / 3;
-      animation.angle      = 5 * polar_theta[x][y] + 3 * move.noise_angle[2] + move.radial[4];
+      animation.angle      = a2 * polar_theta[x][y] + 3 * move.noise_angle[2] + move.radial[4];
       animation.offset_y   = 2 * move.linear[2];
       animation.z          = move.linear[2];
       float show3          = render_value(animation);
 
       animation.dist       = distance[x][y] * (2 + move.directional[3]) / 3;
-      animation.angle      = 4 * polar_theta[x][y] + 3 * move.noise_angle[3] + move.radial[4];
+      animation.angle      = a3 * polar_theta[x][y] + 3 * move.noise_angle[3] + move.radial[4];
       animation.offset_x   = 2 * move.linear[3];
       animation.z          = move.linear[3];
       float show4          = render_value(animation);
@@ -965,70 +966,8 @@ void Caleido1() {
  
 }
 
-void Caleido2() {
-
-  get_ready(); 
-  
-
-  timings.master_speed = 0.002;    // speed ratios for the oscillators
-  timings.ratio[0] = 0.02;         // higher values = faster transitions
-  timings.ratio[1] = 0.03;
-  timings.ratio[2] = 0.04;
-  timings.ratio[3] = 0.05;
-  timings.ratio[4] = 0.6;
-  timings.offset[0] = 0;
-  timings.offset[1] = 100;
-  timings.offset[2] = 200;
-  timings.offset[3] = 300;
-  timings.offset[4] = 400;
-  
-  calculate_oscillators(timings);     // get linear movers and oscillators going
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-  
-      // describe and render animation layers
-      animation.dist       = distance[x][y] * (2 + move.directional[0]) / 3;
-      animation.angle      = 2 * polar_theta[x][y] + 3 * move.noise_angle[0] + move.radial[4];
-      animation.scale_x    = 0.1;
-      animation.scale_y    = 0.1;
-      animation.scale_z    = 0.1;
-      animation.offset_y   = 2 * move.linear[0];
-      animation.offset_x   = 0;
-      animation.offset_z   = 0;
-      animation.z          = move.linear[0];
-      float show1          = render_value(animation);
-
-      animation.dist       = distance[x][y] * (2 + move.directional[1]) / 3;
-      animation.angle      = 2 * polar_theta[x][y] + 3 * move.noise_angle[1] + move.radial[4];
-      animation.offset_x   = 2 * move.linear[1];
-      animation.z          = move.linear[1];
-      float show2          = render_value(animation);
-
-      animation.dist       = distance[x][y] * (2 + move.directional[2]) / 3;
-      animation.angle      = 2 * polar_theta[x][y] + 3 * move.noise_angle[2] + move.radial[4];
-      animation.offset_y   = 2 * move.linear[2];
-      animation.z          = move.linear[2];
-      float show3          = render_value(animation);
-
-      animation.dist       = distance[x][y] * (2 + move.directional[3]) / 3;
-      animation.angle      = 2 * polar_theta[x][y] + 3 * move.noise_angle[3] + move.radial[4];
-      animation.offset_x   = 2 * move.linear[3];
-      animation.z          = move.linear[3];
-      float show4          = render_value(animation);
-      
-      // colormapping
-      pixel.red   = show1;
-      pixel.green = show3 * distance[x][y] / 10;
-      pixel.blue  = (show2 + show4) / 2;
-
-      pixel = rgb_sanity_check(pixel);
-
-     setPixelColor(x, y, pixel);
-    }
-  }
- 
-}
+void Caleido1() { Caleido12_base(0.003, 3, 4, 5, 4); }
+void Caleido2() { Caleido12_base(0.002, 2, 2, 2, 2); }
 
 void Caleido3() {
 
@@ -1697,64 +1636,11 @@ void RGB_Blobs() { // nice one
 }
 
 
-void RGB_Blobs2() { // nice one
-
-  get_ready(); 
-                      
-
-  timings.master_speed = 0.12;    // master speed
-
-  timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.0027;
-  timings.ratio[2] = 0.0031;
-  timings.ratio[3] = 0.0033;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[4] = 0.0036;
-  timings.ratio[5] = 0.0039;
-  
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-      
-      animation.dist       = distance[x][y];
-      animation.angle      = polar_theta[x][y] + move.radial[0] + move.noise_angle[0]+ move.noise_angle[3] + move.noise_angle[1];
-      animation.z          = (sqrtf(animation.dist));// - 10 * move.linear[0];
-      animation.scale_x    = 0.1;
-      animation.scale_y    = 0.1;
-      animation.offset_z   = 10;
-      animation.offset_x   = 10*move.linear[0];
-      float show1          = render_value(animation);
-
-      animation.angle      = polar_theta[x][y] + move.radial[1]+ move.noise_angle[1]+ move.noise_angle[4] + move.noise_angle[2];
-      animation.offset_x   = 11*move.linear[1];
-      animation.offset_z   = 100;
-      float show2          = render_value(animation);
-
-      animation.angle      = polar_theta[x][y] + move.radial[2]+ move.noise_angle[2]+ move.noise_angle[5]+ move.noise_angle[3];
-      animation.offset_x   = 12*move.linear[2];
-      animation.offset_z   = 300;
-      float show3          = render_value(animation);
-      
-      float radius = radial_filter_radius;   // radius of a radial brightness filter
-      float radial = (radius-distance[x][y])/distance[x][y];
-
-      pixel.red    = radial * (show1-show3);
-      pixel.green  = radial * (show2-show1);
-      pixel.blue   = radial * (show3-show2);
-     
-      pixel = rgb_sanity_check(pixel);
-     setPixelColor(x, y, pixel);
-    }
-  }
-  
-}
-
-void RGB_Blobs3() { // nice one
+// Shared RGB_Blobs2/3 helper - same structure, differ in dist offset and color mapping
+void RGB_Blobs23_base(bool variant3) { // nice one
 
   get_ready();
 
-                   
-
   timings.master_speed = 0.12;    // master speed
 
   timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
@@ -1769,7 +1655,7 @@ void RGB_Blobs3() { // nice one
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
       
-      animation.dist       = distance[x][y] + move.noise_angle[4];
+      animation.dist       = variant3 ? (distance[x][y] + move.noise_angle[4]) : distance[x][y];
       animation.angle      = polar_theta[x][y] + move.radial[0] + move.noise_angle[0]+ move.noise_angle[3] + move.noise_angle[1];
       animation.z          = (sqrtf(animation.dist));// - 10 * move.linear[0];
       animation.scale_x    = 0.1 ;
@@ -1791,74 +1677,31 @@ void RGB_Blobs3() { // nice one
       float radius = radial_filter_radius;   // radius of a radial brightness filter
       float radial = (radius-distance[x][y])/distance[x][y];
 
-      pixel.red    = radial * (show1+show3)*0.5 * animation.dist/5;
-      pixel.green  = radial * (show2+show1)*0.5 * y/15;
-      pixel.blue   = radial * (show3+show2)*0.5 * x/15;
-     
+      if (variant3) {
+        pixel.red    = radial * (show1+show3)*0.5 * animation.dist/5;
+        pixel.green  = radial * (show2+show1)*0.5 * y/15;
+        pixel.blue   = radial * (show3+show2)*0.5 * x/15;
+      } else {
+        pixel.red    = radial * (show1-show3);
+        pixel.green  = radial * (show2-show1);
+        pixel.blue   = radial * (show3-show2);
+      }
+
       pixel = rgb_sanity_check(pixel);
-      setPixelColor((num_x * y + x), pixel);
+      if (variant3)
+        setPixelColor((num_x * y + x), pixel);
+      else
+        setPixelColor(x, y, pixel);
     }
   }
   
 }
 
-void RGB_Blobs4() { // nice one
+void RGB_Blobs2() { RGB_Blobs23_base(false); }
+void RGB_Blobs3() { RGB_Blobs23_base(true); }
 
-  get_ready();
-
-  
-
-                     
-
-  timings.master_speed = 0.02;    // master speed
-
-  timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.0027;
-  timings.ratio[2] = 0.0031;
-  timings.ratio[3] = 0.0033;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[4] = 0.0036;
-  timings.ratio[5] = 0.0039;
-  
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-      
-      animation.dist       = distance[x][y] + move.noise_angle[4];
-      animation.angle      = polar_theta[x][y] + move.radial[0] + move.noise_angle[0]+ move.noise_angle[3] + move.noise_angle[1];
-      animation.z          = 3+sqrtf(animation.dist);
-      animation.scale_x    = 0.1;
-      animation.scale_y    = 0.1;
-      animation.offset_z   = 10;
-      animation.offset_x   = 50 * move.linear[0];
-      float show1          = render_value(animation);
-
-      animation.angle      = polar_theta[x][y] + move.radial[1]+ move.noise_angle[1]+ move.noise_angle[4] + move.noise_angle[2];
-      animation.offset_x   = 50 * move.linear[1];
-      animation.offset_z   = 100;
-      float show2          = render_value(animation);
-
-      animation.angle      = polar_theta[x][y] + move.radial[2]+ move.noise_angle[2]+ move.noise_angle[5]+ move.noise_angle[3];
-      animation.offset_x   = 50 * move.linear[2];
-      animation.offset_z   = 300;
-      float show3          = render_value(animation);
-      
-      float radius = 23;   // radius of a radial brightness filter
-      float radial = (radius-distance[x][y])/distance[x][y];
-
-      pixel.red    = radial * (show1+show3)*0.5 * animation.dist/5;
-      pixel.green  = radial * (show2+show1)*0.5 * y/15;
-      pixel.blue   = radial * (show3+show2)*0.5 * x/15;
-     
-      pixel = rgb_sanity_check(pixel);
-      setPixelColor((num_x * y + x), pixel);
-    }
-  }
-  
-}
-
-void RGB_Blobs5() { // nice one
-
+// Shared RGB_Blobs4/5 helper - differ only in scale
+void RGB_Blobs45_base(float scale) { // nice one
   get_ready();
 
   
@@ -1882,8 +1725,8 @@ void RGB_Blobs5() { // nice one
       animation.dist       = distance[x][y] + move.noise_angle[4];
       animation.angle      = polar_theta[x][y] + move.radial[0] + move.noise_angle[0]+ move.noise_angle[3] + move.noise_angle[1];
       animation.z          = 3+sqrtf(animation.dist);
-      animation.scale_x    = 0.05;
-      animation.scale_y    = 0.05;
+      animation.scale_x    = scale;
+      animation.scale_y    = scale;
       animation.offset_z   = 10;
       animation.offset_x   = 50 * move.linear[0];
       float show1          = render_value(animation);
@@ -1912,7 +1755,8 @@ void RGB_Blobs5() { // nice one
   }
 
 }
-
+void RGB_Blobs4() { RGB_Blobs45_base(0.1); }
+void RGB_Blobs5() { RGB_Blobs45_base(0.05); }
 void Big_Caleido() { // nice one
 
   get_ready();
@@ -2296,11 +2140,10 @@ void SM4() {
  
 }
 
-void SM5() { 
+// Shared SM5/SM6 helper - same 6-layer structure, differ in zoom factor and color mapping
+void SM56_base(float s, bool variant6) {
 
   get_ready();
-
-  
 
   timings.master_speed = 0.03;    // master speed
 
@@ -2315,103 +2158,6 @@ void SM5() {
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
-      
-      animation.dist       = distance[x][y] * (move.directional[0]);
-      animation.angle      = polar_theta[x][y] + move.radial[0];
-      animation.z          = 5;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_z   = 5 * move.linear[0];
-      animation.offset_x   = 0;
-      animation.offset_y   = 0;
-      float show1          = render_value(animation);
-
-      animation.dist       = distance[x][y]* move.directional[1];
-      animation.angle      = polar_theta[x][y] + move.radial[1];
-      animation.z          = 50;
-      animation.scale_x    = 0.07;
-      animation.scale_y    = 0.07;
-      animation.offset_z   = 5 * move.linear[1];
-      animation.offset_x   = 0;
-      animation.offset_y   = 0;
-      float show2          = render_value(animation);
-      
-      animation.dist       = distance[x][y]* move.directional[2];
-      animation.angle      = polar_theta[x][y] + move.radial[2];
-      animation.z          = 500;
-      animation.scale_x    = 0.05;
-      animation.scale_y    = 0.05;
-      animation.offset_z   = 5 * move.linear[2];
-      animation.offset_x   = 0;
-      animation.offset_y   = 0;
-      float show3          = render_value(animation);
-
-      animation.dist       = distance[x][y] * (move.directional[3]);
-      animation.angle      = polar_theta[x][y] + move.radial[3];
-      animation.z          = 5;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_z   = 5 * move.linear[3];
-      animation.offset_x   = 0;
-      animation.offset_y   = 0;
-      float show4          = render_value(animation);
-
-      animation.dist       = distance[x][y]* move.directional[4];
-      animation.angle      = polar_theta[x][y] + move.radial[4];
-      animation.z          = 50;
-      animation.scale_x    = 0.07;
-      animation.scale_y    = 0.07;
-      animation.offset_z   = 5 * move.linear[4];
-      animation.offset_x   = 0;
-      animation.offset_y   = 0;
-      float show5          = render_value(animation);
-      
-      animation.dist       = distance[x][y]* move.directional[5];
-      animation.angle      = polar_theta[x][y] + move.radial[5];
-      animation.z          = 500;
-      animation.scale_x    = 0.05;
-      animation.scale_y    = 0.05;
-      animation.offset_z   = 5 * move.linear[5];
-      animation.offset_x   = 0;
-      animation.offset_y   = 0;
-      float show6          = render_value(animation);
-
-      float radius = radial_filter_radius;   // radius of a radial brightness filter
-      float radial = (radius-distance[x][y])/distance[x][y];
-     
-      pixel.red    = radial * add(show1,show4);
-      pixel.green  = radial * colordodge(show2,show5);
-      pixel.blue   = radial * screen(show3,show6);
-     
-      pixel = rgb_sanity_check(pixel);
-      
-     setPixelColor(x, y, pixel);
-    }
-  }
-}
-
-
-void SM6() { 
-
-  get_ready();
-
-  
-
-  timings.master_speed = 0.03;    // master speed
-
-  timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.027;
-  timings.ratio[2] = 0.031;
-  timings.ratio[3] = 0.0053;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[4] = 0.0056;
-  timings.ratio[5] = 0.0059;
-  
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-
-      float s = 0.7; // zoom factor
       
       animation.dist       = distance[x][y] * (move.directional[0]) * s;
       animation.angle      = polar_theta[x][y] + move.radial[0];
@@ -2432,7 +2178,7 @@ void SM6() {
       animation.offset_x   = 0;
       animation.offset_y   = 0;
       float show2          = render_value(animation);
-      
+
       animation.dist       = distance[x][y]* move.directional[2] * s;
       animation.angle      = polar_theta[x][y] + move.radial[2];
       animation.z          = 500;
@@ -2462,7 +2208,7 @@ void SM6() {
       animation.offset_x   = 0;
       animation.offset_y   = 0;
       float show5          = render_value(animation);
-      
+
       animation.dist       = distance[x][y]* move.directional[5] * s;
       animation.angle      = polar_theta[x][y] + move.radial[5];
       animation.z          = 500;
@@ -2476,20 +2222,28 @@ void SM6() {
       float radius = radial_filter_radius;   // radius of a radial brightness filter
       float radial = (radius-distance[x][y])/distance[x][y];
 
-      show7 = screen(show1, show4);
-      show8 = colordodge(show2, show5);
-      show9 = screen(show3, show6);
-     
-      pixel.red    = radial * (show7 + show8);
-      pixel.green  = 0;
-      pixel.blue   = radial * show9;
-     
+      if (variant6) {
+        show7 = screen(show1, show4);
+        show8 = colordodge(show2, show5);
+        show9 = screen(show3, show6);
+        pixel.red    = radial * (show7 + show8);
+        pixel.green  = 0;
+        pixel.blue   = radial * show9;
+      } else {
+        pixel.red    = radial * add(show1,show4);
+        pixel.green  = radial * colordodge(show2,show5);
+        pixel.blue   = radial * screen(show3,show6);
+      }
+
       pixel = rgb_sanity_check(pixel);
       
      setPixelColor(x, y, pixel);
     }
   }
 }
+
+void SM5() { SM56_base(1.0, false); }
+void SM6() { SM56_base(0.7, true); }
 
 
 void SM8() { 
@@ -2571,13 +2325,12 @@ void SM8() {
 }
 
 
-void SM9() { 
+// Shared SM9/SM10 helper - same 4-layer render loop, differ in speed, scale, and color mapping
+void SM910_base(float speed, float scale, bool variant10) {
 
   get_ready();
 
-  
-
-  timings.master_speed = 0.005;    // master speed
+  timings.master_speed = speed;    // master speed
 
   timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 0.027;
@@ -2591,89 +2344,6 @@ void SM9() {
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
 
-      animation.dist       = distance[x][y];
-      animation.angle      = polar_theta[x][y];
-      animation.z          = 5;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_y   = -30 * move.linear[0];
-      animation.offset_z   = 0;
-      animation.offset_x   = 0;
-      animation.low_limit  = -1;
-      show1                = render_value(animation);
-
-      animation.dist       = distance[x][y];
-      animation.angle      = polar_theta[x][y];
-      animation.z          = 50;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_y   = -30 * move.linear[1];
-      animation.offset_z   = 0;
-      animation.offset_x   = 0;
-      animation.low_limit  = -1;
-      show2                = render_value(animation);
-
-      animation.dist       = distance[x][y];// + show1/64;
-      animation.angle      = polar_theta[x][y] + 2 + (show1 / 255) * PI;
-      animation.z          = 5;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_y   = -10 * move.linear[0];
-      animation.offset_z   = 0;
-      animation.offset_x   = 0;
-      animation.low_limit  = 0;
-      show3                = render_value(animation);
-
-      animation.dist       = distance[x][y];
-      animation.angle      = polar_theta[x][y] + 2 +(show2 / 255) * PI;;
-      animation.z          = 5;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_y   = -20 * move.linear[0];
-      animation.offset_z   = 0;
-      animation.offset_x   = 0;
-      animation.low_limit  = 0;
-      show4                = render_value(animation);
-
-      show5 = screen(show4, show3);
-      show6 = colordodge(show5, show3);
-
-      float linear1 = y / 32.f;
-      float linear2 = (32-y) / 32.f;
-
-      pixel.red    = show5 * linear1;
-      pixel.green  = 0;
-      pixel.blue   = show6 * linear2;
-     
-      pixel = rgb_sanity_check(pixel);
-      
-     setPixelColor(x, y, pixel);
-    }
-  }
-}
-
-void SM10() { 
-
-  get_ready();
-
-  
-
-  timings.master_speed = 0.006;    // 0.006
-
-  timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.027;
-  timings.ratio[2] = 0.031;
-  timings.ratio[3] = 0.0053;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[4] = 0.0056;
-  timings.ratio[5] = 0.0059;
-  
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-
-      float scale = 0.6;
-      
       animation.dist       = distance[x][y];
       animation.angle      = polar_theta[x][y];
       animation.z          = 5;
@@ -2721,13 +2391,18 @@ void SM10() {
       show5 = screen(show4, show3);
       show6 = colordodge(show5, show3);
 
-      //float linear1 = y / 32.f;
-      //float linear2 = (32-y) / 32.f;
+      if (variant10) {
+        pixel.red    = (show5+show6)/2;
+        pixel.green  = (show5-50)+(show6/16);
+        pixel.blue   = 0;//show6;
+      } else {
+        float linear1 = y / 32.f;
+        float linear2 = (32-y) / 32.f;
+        pixel.red    = show5 * linear1;
+        pixel.green  = 0;
+        pixel.blue   = show6 * linear2;
+      }
 
-      pixel.red    = (show5+show6)/2;
-      pixel.green  = (show5-50)+(show6/16);
-      pixel.blue   = 0;//show6;
-     
       pixel = rgb_sanity_check(pixel);
       
      setPixelColor(x, y, pixel);
@@ -2735,9 +2410,11 @@ void SM10() {
   }
 }
 
-void Complex_Kaleido() { 
+void SM9()  { SM910_base(0.005, 1.0, false); }
+void SM10() { SM910_base(0.006, 0.6, true); }
 
-
+// Shared Complex_Kaleido/Complex_Kaleido_2 helper - differ only in size scale factor
+void Complex_Kaleido_12_base(float size) {
 
   get_ready();
 
@@ -2753,97 +2430,6 @@ void Complex_Kaleido() {
   timings.ratio[5] = 0.0059;
   
   calculate_oscillators(timings); 
-
-  //float size = 1.5;
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-
-      animation.dist       = distance[x][y];
-      animation.angle      = 5 * polar_theta[x][y] + 10 * move.radial[0] + animation.dist /2;
-      animation.z          = 5;
-      animation.scale_x    = 0.07;
-      animation.scale_y    = 0.07;
-      animation.offset_z   = 0;
-      animation.offset_x   = -30 * move.linear[0];
-      animation.offset_y   = 0;
-      animation.low_limit  = 0;
-      show1                = render_value(animation);
-
-      animation.dist       = distance[x][y];
-      animation.angle      = -5 * polar_theta[x][y] + 12 * move.radial[1] + animation.dist /2;
-      animation.z          = 500;
-      animation.scale_x    = 0.07;
-      animation.scale_y    = 0.07;
-      animation.offset_z   = 0;
-      animation.offset_x   = -30 * move.linear[1];
-      animation.offset_y   = 0;
-      animation.low_limit  = 0;
-      show2                = render_value(animation);
-
-      animation.dist       = distance[x][y];
-      animation.angle      = -5 * polar_theta[x][y] + 12 * move.radial[2] + animation.dist /2;
-      animation.z          = 500;
-      animation.scale_x    = 0.05;
-      animation.scale_y    = 0.05;
-      animation.offset_z   = 0;
-      animation.offset_x   = -40 * move.linear[2];
-      animation.offset_y   = 0;
-      animation.low_limit  = 0;
-      show3                = render_value(animation);
-
-      
-      animation.dist       = distance[x][y];
-      animation.angle      = 5 * polar_theta[x][y] + 12 * move.radial[3] + animation.dist /2;
-      animation.z          = 500;
-      animation.scale_x    = 0.09;
-      animation.scale_y    = 0.09;
-      animation.offset_z   = 0;
-      animation.offset_x   = -35 * move.linear[3];
-      animation.offset_y   = 0;
-      animation.low_limit  = 0;
-      show4                = render_value(animation);
-
-      show5 = screen(show4, show3);
-      show6 = colordodge(show2, show3);
-
-      //float linear1 = y / 32.f;
-      //float linear2 = (32-y) / 32.f;
-
-      float radius = radial_filter_radius;   // radius of a radial brightness filter
-      float radial = (radius-distance[x][y])/distance[x][y];
-
-      pixel.red    = radial*(show1+show2);
-      pixel.green  = 0.3*radial*show6;//(radial*(show1))*0.3f;
-      pixel.blue   = radial*show5;
-     
-      pixel = rgb_sanity_check(pixel);
-      
-     setPixelColor(x, y, pixel);
-    }
-  }
-}
-
-void Complex_Kaleido_2() { 
-
-
-
-  get_ready();
-
-  
-
-  timings.master_speed = 0.009;    // master speed
-
-  timings.ratio[0] = 0.025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.027;
-  timings.ratio[2] = 0.031;
-  timings.ratio[3] = 0.0053;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[4] = 0.0056;
-  timings.ratio[5] = 0.0059;
-  
-  calculate_oscillators(timings); 
-
-  float size = 0.5;
 
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
@@ -2896,9 +2482,6 @@ void Complex_Kaleido_2() {
       show5 = screen(show4, show3);
       show6 = colordodge(show2, show3);
 
-      //float linear1 = y / 32.f;
-      //float linear2 = (32-y) / 32.f;
-
       float radius = radial_filter_radius;   // radius of a radial brightness filter
       float radial = (radius-distance[x][y])/distance[x][y];
 
@@ -2912,6 +2495,9 @@ void Complex_Kaleido_2() {
     }
   }
 }
+
+void Complex_Kaleido()   { Complex_Kaleido_12_base(1.0); }
+void Complex_Kaleido_2() { Complex_Kaleido_12_base(0.5); }
 
 
 void Complex_Kaleido_3() { 
@@ -3456,13 +3042,12 @@ void Module_Experiment1() {
   }
 }
 
-void Module_Experiment2() { 
+// Shared Module_Experiment2/3 helper - same structure, differ in speed and dist calculation
+void Module_Experiment23_base(float speed, float dist_offset, float dist_scale, int dir_idx) { 
 
   get_ready();
 
-  
-
-  timings.master_speed = 0.02;    // master speed 
+  timings.master_speed = speed;    // master speed 
 
   timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 0.0027;
@@ -3474,7 +3059,7 @@ void Module_Experiment2() {
   for (int x = 0; x < num_x; x++) {
     for (int y = 0; y < num_y; y++) {
 
-      animation.dist       = distance[x][y] - ( 16 + move.directional[0] * 16);
+      animation.dist       = distance[x][y] - (dist_offset + move.directional[dir_idx] * dist_scale);
       animation.angle      = move.noise_angle[0] + move.noise_angle[1] + polar_theta[x][y];
       animation.z          = 5;
       animation.scale_x    = 0.1 ;
@@ -3496,45 +3081,8 @@ void Module_Experiment2() {
   }
 }
 
-void Module_Experiment3() { 
-
-  get_ready();
-
-  
-
-  timings.master_speed = 0.01;    // master speed 
-
-  timings.ratio[0] = 0.0025;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.0027;
-  timings.ratio[2] = 0.029;
-  timings.ratio[3] = 0.033;           // speed ratios for the oscillators, higher values = faster transitions
-  
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-
-      animation.dist       = distance[x][y] - (12 + move.directional[3]*4);
-      animation.angle      = move.noise_angle[0] + move.noise_angle[1] + polar_theta[x][y];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 ;
-      animation.scale_y    = 0.1 ;
-      animation.offset_z   = -10 ;
-      animation.offset_y   = 20 * move.linear[2];
-      animation.offset_x   = 10;
-      animation.low_limit  = 0;
-      show1                = render_value(animation);
-      
-      pixel.red    = show1;
-      pixel.green  = show1 - 80;
-      pixel.blue   = show1 - 150;
-      
-      pixel = rgb_sanity_check(pixel);
-      
-     setPixelColor(x, y, pixel);
-    }
-  }
-}
+void Module_Experiment2() { Module_Experiment23_base(0.02, 16, 16, 0); }
+void Module_Experiment3() { Module_Experiment23_base(0.01, 12, 4, 3); }
 
 void Zoom2() { // nice one
   
@@ -3828,15 +3376,14 @@ void Module_Experiment7() {
   }
 }
 
-void Module_Experiment8() { 
+// Shared Module_Experiment8/10 helper - identical render loop, differ in w and color mapping
+void Module_Experiment810_base(float w, bool use_hsv) { 
 
   get_ready();
 
   
 
   timings.master_speed = 0.01;    // master speed 0.031
-
-  float w = 0.3;
 
   timings.ratio[0] = 0.01;           // speed ratios for the oscillators, higher values = faster transitions
   timings.ratio[1] = 0.011;
@@ -3863,62 +3410,53 @@ void Module_Experiment8() {
       float s = 0.4; // scale
       float r = 1.5; // scroll speed
 
-      animation.dist       = 3+distance[x][y] + 3*sinf(0.25*distance[x][y]-move.radial[3]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[0] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 10*move.linear[0] ;
-      animation.offset_y   = -5 * r * move.linear[0];
-      animation.offset_x   = 10;
-      animation.low_limit  = 0;
-      show1                = render_value(animation);
+      static const float dist_add[]   = {3, 4, 5};
+      static const float sin_coeff[]  = {0.25, 0.24, 0.23};
+      static const int   radial_idx[] = {3, 4, 5};
+      static const int   noise_idx[]  = {0, 1, 2};
+      static const float oz_mult[]    = {10, 0.1, 0.1};
+      static const float ox_vals[]    = {10, 100, 1000};
+      float shows[3];
 
-      animation.dist       = 4+distance[x][y] + 4*sinf(0.24*distance[x][y]-move.radial[4]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[1] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 0.1*move.linear[1] ;
-      animation.offset_y   = -5 * r * move.linear[1];
-      animation.offset_x   = 100;
-      animation.low_limit  = 0;
-      show2                = render_value(animation);
+      for (int i = 0; i < 3; i++) {
+        animation.dist       = dist_add[i]+distance[x][y] + dist_add[i]*sinf(sin_coeff[i]*distance[x][y]-move.radial[radial_idx[i]]);
+        animation.angle      = polar_theta[x][y] + move.noise_angle[noise_idx[i]] + move.noise_angle[6];
+        animation.z          = 5;
+        animation.scale_x    = 0.1 * s;
+        animation.scale_y    = 0.1 * s;
+        animation.offset_z   = oz_mult[i]*move.linear[i] ;
+        animation.offset_y   = -5 * r * move.linear[i];
+        animation.offset_x   = ox_vals[i];
+        animation.low_limit  = 0;
+        shows[i]             = render_value(animation);
+      }
 
-      animation.dist       = 5+distance[x][y] + 5*sinf(0.23*distance[x][y]-move.radial[5]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[2] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 0.1*move.linear[2] ;
-      animation.offset_y   = -5 * r * move.linear[2];
-      animation.offset_x   = 1000;
-      animation.low_limit  = 0;
-      show3                = render_value(animation);
-
-      show4 = colordodge(show1, show2);
+      show4 = colordodge(shows[0], shows[1]);
 
       float rad = sinf(PI/2+distance[x][y]/14); // better radial filter?!
 
-      
-      /*
-      pixel.red    = show1;
-      pixel.green  = show1 * 0.3;
-      pixel.blue   = show2-show1;
-      */
-      
-      pixel.red    = rad * ((show1 + show2) + show3);
-      pixel.green  = (((show2 + show3)*0.8)-90)*rad;
-      pixel.blue   = show4 * 0.2;
-      
-      
-      
-      pixel = rgb_sanity_check(pixel);
-      
-     setPixelColor(x, y, pixel);
+      if (use_hsv) {
+        CHSV(rad * ((shows[0] + shows[1]) + shows[2]), 255, 255);
+        pixel = rgb_sanity_check(pixel);
+        byte a = millis()/100;
+        CRGB p = CRGB( CHSV(((a + shows[0] + shows[1]) + shows[2]), 255, 255));
+        rgb pixel;
+        pixel.red = p.red;
+        pixel.green = p.green;
+        pixel.blue = p.blue;
+        setPixelColor(x, y, pixel);
+      } else {
+        pixel.red    = rad * ((shows[0] + shows[1]) + shows[2]);
+        pixel.green  = (((shows[1] + shows[2])*0.8)-90)*rad;
+        pixel.blue   = show4 * 0.2;
+        pixel = rgb_sanity_check(pixel);
+       setPixelColor(x, y, pixel);
+      }
     }
   }
 }
+
+void Module_Experiment8()  { Module_Experiment810_base(0.3, false); }
 
 void Module_Experiment9() { 
 
@@ -3966,102 +3504,7 @@ void Module_Experiment9() {
   }
 }
 
-void Module_Experiment10() { 
-
-  get_ready();
-
-  
-
-  timings.master_speed = 0.01;    // master speed 0.031
-
-  float w = 1;
-
-  timings.ratio[0] = 0.01;           // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[1] = 0.011;
-  timings.ratio[2] = 0.013;
-  timings.ratio[3] = 0.33*w;
-  timings.ratio[4] = 0.36*w;            // speed ratios for the oscillators, higher values = faster transitions
-  timings.ratio[5] = 0.38*w; 
-  timings.ratio[6] = 0.0003;  // master rotation
-
-  timings.offset[0] = 0;
-  timings.offset[1] = 100;
-  timings.offset[2] = 200;
-  timings.offset[3] = 300;
-  timings.offset[4] = 400;
-  timings.offset[5] = 500;
-  timings.offset[6] = 600;
-  
-
-  calculate_oscillators(timings); 
-
-  for (int x = 0; x < num_x; x++) {
-    for (int y = 0; y < num_y; y++) {
-
-      float s = 0.4; // scale
-      float r = 1.5; // scroll speed
-
-      animation.dist       = 3+distance[x][y] + 3*sinf(0.25*distance[x][y]-move.radial[3]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[0] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 10*move.linear[0] ;
-      animation.offset_y   = -5 * r * move.linear[0];
-      animation.offset_x   = 10;
-      animation.low_limit  = 0;
-      show1                = render_value(animation);
-
-      animation.dist       = 4+distance[x][y] + 4*sinf(0.24*distance[x][y]-move.radial[4]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[1] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 0.1*move.linear[1] ;
-      animation.offset_y   = -5 * r * move.linear[1];
-      animation.offset_x   = 100;
-      animation.low_limit  = 0;
-      show2                = render_value(animation);
-
-      animation.dist       = 5+distance[x][y] + 5*sinf(0.23*distance[x][y]-move.radial[5]);
-      animation.angle      = polar_theta[x][y] + move.noise_angle[2] + move.noise_angle[6];
-      animation.z          = 5;
-      animation.scale_x    = 0.1 * s;
-      animation.scale_y    = 0.1 * s;
-      animation.offset_z   = 0.1*move.linear[2] ;
-      animation.offset_y   = -5 * r * move.linear[2];
-      animation.offset_x   = 1000;
-      animation.low_limit  = 0;
-      show3                = render_value(animation);
-
-      show4 = colordodge(show1, show2);
-
-      float rad = sinf(PI/2+distance[x][y]/14); // better radial filter?!
-
-      
-      /*
-      pixel.red    = show1;
-      pixel.green  = show1 * 0.3;
-      pixel.blue   = show2-show1;
-      */
-      
-       CHSV(rad * ((show1 + show2) + show3), 255, 255);
-      
-      
-      
-      
-      pixel = rgb_sanity_check(pixel);
-
-      byte a = millis()/100;
-      CRGB p = CRGB( CHSV(((a + show1 + show2) + show3), 255, 255));
-      rgb pixel;
-      pixel.red = p.red;
-      pixel.green = p.green;
-      pixel.blue = p.blue;
-      setPixelColor(x, y, pixel);
-    }
-  }
-}
+void Module_Experiment10() { Module_Experiment810_base(1.0, true); }
 
 
 }; 
